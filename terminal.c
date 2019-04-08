@@ -3,6 +3,9 @@
 #include <unistd.h>
 #include <string.h>
 
+#include "message.h"
+#include "lectureEcriture.h"
+
 int main(int argc, char const *argv[])
 {
 
@@ -15,19 +18,20 @@ int df2 = atoi(argv[2]);
     dup2(df1,1); //ecrit dans argv1
     dup2(df2,0);//lit dans arv2
 
-    char messagelue[50];
 
-    write(df1,"1234123412341234|Demande|50 \n",30);
+    char *demandeArgent = message("1234123412341234", "Demande", "50");
 
-    read(df2,messagelue,5);
+    ecritLigne(df1,demandeArgent);
 
-    printf("message lue : %s \n", messagelue);
+    char *reponse = litLigne(df2);
 
-    if(strcmp(messagelue, "1")){
-        printf("1234123412341234|Reponse|accepté \n");
+    printf("message lue : %s \n", reponse);
+
+    if(strcmp(reponse, "1")){
+        printf("1234123412341234|Reponse|accepte \n");
     }else
     {
-        printf("1234123412341234|Reponse|refusé \n");
+        printf("1234123412341234|Reponse|refuse \n");
     }
     
 
