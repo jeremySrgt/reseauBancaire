@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <unistd.h>
+#include <string.h>
 
 int main(int argc, char const *argv[])
 {
@@ -16,11 +17,20 @@ int df2 = atoi(argv[2]);
 
     char messagelue[50];
 
-    write(df1,"test\n",5);
+    write(df1,"1234123412341234|Demande|50 \n",30);
 
     read(df2,messagelue,5);
 
     printf("message lue : %s \n", messagelue);
+
+    if(strcmp(messagelue, "1")){
+        printf("1234123412341234|Reponse|accepté \n");
+    }else
+    {
+        printf("1234123412341234|Reponse|refusé \n");
+    }
+    
+
 
 
     
