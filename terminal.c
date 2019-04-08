@@ -27,7 +27,7 @@ int df2 = atoi(argv[2]);
 
     printf("message lue : %s \n", reponse);
 
-    if(strcmp(reponse, "1")){
+    if(strcmp(reponse, "1") == 0){
         printf("1234123412341234|Reponse|accepte \n");
     }else
     {

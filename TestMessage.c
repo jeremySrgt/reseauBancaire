@@ -23,7 +23,7 @@ int main(int argc, char **argv)
 
   decoupeOk = decoupe(msg, emeteur, type, valeur);
   if (!decoupeOk) {
-    printf("Erreur de découpage!!\n");
+    printf("Erreur de dï¿½coupage!!\n");
     exit(0);
   }
 
@@ -36,7 +36,7 @@ int main(int argc, char **argv)
   printf("message = %s\n", msg);
   decoupeOk = decoupe(msg, emeteur, type, valeur);
   if (!decoupeOk) {
-    printf("Erreur de découpage!!\n");
+    printf("Erreur de decoupage!!\n");
     perror("TestMessage (decoupe)");
     exit(0);
   }
