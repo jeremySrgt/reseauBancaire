@@ -1,12 +1,13 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <unistd.h>
+#include "lectureEcriture.h"
 
 int main(int argc, char const *argv[])
 {
     pid_t pid_fils;
 
-    int descripteurTube[2];
+    int descripteurTube[2]; //on lit en fd[0] et on ecrit en fd[1]
 
     if(pipe(descripteurTube) != 0)
     {
@@ -23,6 +24,8 @@ int main(int argc, char const *argv[])
     else
     {
         printf("nous sommes dans le processus 'acquisition'");
+        printf("lecture de la demande : %s",litLigne(descripteurTube[0]));
+        ecritLigne(descripteurTube[1],"1");
     }
     
 
