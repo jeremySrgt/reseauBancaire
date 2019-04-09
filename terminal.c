@@ -16,24 +16,29 @@ int df2 = atoi(argv[2]);
 
 // printf("executable terminal cree a partir de acquisition\n");
 
-//on met en dur les 2 tubes qui vont vers acquisition
 
+    //ouvre le fichier qui contient les numéros de carte
     int descripteurFichier = open("InfoClient.txt", O_RDONLY);
     char *codeCB = litLigne(descripteurFichier);
 
+    //prend la ligne mais sans le retour chariot
     codeCB[strlen(codeCB)-1] ='\0';
-    // char *codeCB = "123456";
 
-
+    //on met en dur les 2 tubes qui vont vers acquisition
     dup2(df1,1); //ecrit dans argv1
     dup2(df2,0);//lit dans argv2
 
+    //initilisation de la fonction alea du programme alea.h
     aleainit();
     char argentAleatoire[70];
+
+    //Convertit le nombre aléatoire en une chaine de caractère
     sprintf(argentAleatoire, "%d", alea(5,20));
     printf("argent aleatoire : %s\n",argentAleatoire);
 
+    //Formatage du message pour etre |...|...|...|
     char *demandeArgent = message(codeCB, "Demande", argentAleatoire);
+
 
 
     // int decoupage = decoupe(demandeArgent,codeCB,"demande",argentAleatoire);
@@ -43,19 +48,27 @@ int df2 = atoi(argv[2]);
     // }
     // printf("%s", demandeArgent);
 
+    //Ecrit dans le tube la demande selon le formatage 
     ecritLigne(df1,demandeArgent);
 
+    //Codage en dure de la lecture du tube
     char *reponse = litLigne(df2);
 
     printf("message lue : %s \n", reponse);
-    char *accepte = "1\n";
+    //Formatage de la comparaison avec le message reçu d'acquisition
+    char *accepte = message(codeCB, "Reponse", "1");
+
+
+    // Traitement de l'affichage en fonction du retour du serveur authorisation
+    // 1 -> accepté, 0 -> refusé
 
     if(strcmp(reponse, accepte) == 0){
-        printf("%s",message(codeCB,"Reponse","accepte"));
-        // printf("%s|Reponse|accepte|\n", codeCB);
+        //Payement accepté
+        printf("Payement accepte \n");
     }else
     {
-        printf("%s",message(codeCB,"Reponse","refuse"));
+        //Payement refusé
+        printf("Payement refuse \n");
     }
     
     
