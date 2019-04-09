@@ -11,7 +11,6 @@
 int main(int argc, char const *argv[])
 {
 
-
 int df1 = atoi(argv[1]);
 int df2 = atoi(argv[2]);
 
@@ -19,16 +18,17 @@ int df2 = atoi(argv[2]);
 
     int descripteurFichier = open("InfoClient.txt", O_RDONLY);
     char *codeCB = litLigne(descripteurFichier);
+    printf("code CB verifie saut ligne : %s", codeCB);
 
     dup2(df1,1); //ecrit dans argv1
-    dup2(df2,0);//lit dans arv2
+    dup2(df2,0);//lit dans argv2
 
     aleainit();
     char argentAleatoire[70];
     sprintf(argentAleatoire, "%d", alea(5,20));
 
     char *demandeArgent = message(codeCB, "Demande", argentAleatoire);
-    printf("%s", demandeArgent);
+    // printf("%s", demandeArgent);
 
     ecritLigne(df1,demandeArgent);
 
