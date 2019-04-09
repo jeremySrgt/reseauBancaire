@@ -24,9 +24,9 @@ int df2 = atoi(argv[2]);
     //prend la ligne mais sans le retour chariot
     codeCB[strlen(codeCB)-1] ='\0';
 
-    //on met en dur les 2 tubes qui vont vers acquisition
     dup2(df1,1); //ecrit dans argv1
-    dup2(df2,0);//lit dans argv2
+    // dup2(0,df2);//lit dans argv2
+    dup2(df2,0);
 
     //initilisation de la fonction alea du programme alea.h
     aleainit();
@@ -64,17 +64,17 @@ int df2 = atoi(argv[2]);
     char *accepte = message(codeCB, "Reponse", "1");
 
 
-    // Traitement de l'affichage en fonction du retour du serveur authorisation
+    // Traitement de l'affichage en fonction du retour du serveur autorisation
     // 1 -> accepté, 0 -> refusé
 
     if(strcmp(reponse, accepte) == 0){
         //Payement accepté
-        fprintf(stderr, "payement accepte");
+        fprintf(stderr, "payement accepte\n");
         // printf("Payement accepte \n");
     }else
     {
         //Payement refusé
-        fprintf(stderr, "payement refuse");
+        fprintf(stderr, "payement refuse\n");
         // printf("Payement refuse \n");
     }
     
