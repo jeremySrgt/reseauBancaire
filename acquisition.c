@@ -44,7 +44,8 @@ int main(int argc, char const *argv[])
         
 
         printf("la demande envoyé PAR le terminal est : %s",litLigne(descripteurTubeDemandeTerminal[0]));
-
+        close(descripteurTubeDemandeTerminal[0]);
+        close(descripteurTubeDemandeTerminal[1]);
         ecritLigne(descripteurTubeReponseTerminal[1],"|1234123412341234|Reponse|1|");
         
         // printf("la repone envoyé VERS le terminal est : %s",litLigne(descripteurTubeDemandeTerminal[0]));
