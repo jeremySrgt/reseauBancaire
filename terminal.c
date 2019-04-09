@@ -31,12 +31,14 @@ printf("executable terminal cree a partir de acquisition\n");
     //initilisation de la fonction alea du programme alea.h
     aleainit();
     char argentAleatoire[70];
+
     //Convertit le nombre aléatoire en une chaine de caractère
     sprintf(argentAleatoire, "%d", alea(5,20));
     printf("argent aleatoire : %s\n",argentAleatoire);
 
     //Formatage du message pour etre |...|...|...|
     char *demandeArgent = message(codeCB, "Demande", argentAleatoire);
+
 
 
     // int decoupage = decoupe(demandeArgent,codeCB,"demande",argentAleatoire);
@@ -53,17 +55,20 @@ printf("executable terminal cree a partir de acquisition\n");
     char *reponse = litLigne(df2);
 
     printf("message lue : %s \n", reponse);
-    char *accepte = "1\n";
+    //Formatage de la comparaison avec le message reçu d'acquisition
+    char *accepte = message(codeCB, "Reponse", "1");
+
 
     // Traitement de l'affichage en fonction du retour du serveur authorisation
     // 1 -> accepté, 0 -> refusé
 
     if(strcmp(reponse, accepte) == 0){
-        printf("%s",message(codeCB,"Reponse","accepte"));
-        // printf("%s|Reponse|accepte|\n", codeCB);
+        //Payement accepté
+        printf("Payement accepte \n");
     }else
     {
-        printf("%s",message(codeCB,"Reponse","refuse"));
+        //Payement refusé
+        printf("Payement refuse \n");
     }
     
     
