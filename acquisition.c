@@ -28,6 +28,7 @@ int main(int argc, char const *argv[])
     
     if(pid_fils == 0){
         printf("fils\n");
+        //utiliser un sprintf()
         execlp("terminal.c","terminal.c","1","0",NULL);
     }
 
