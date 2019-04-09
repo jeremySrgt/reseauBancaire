@@ -34,7 +34,7 @@ int df2 = atoi(argv[2]);
 
     //Convertit le nombre aléatoire en une chaine de caractère
     sprintf(argentAleatoire, "%d", alea(5,20));
-    printf("argent aleatoire : %s\n",argentAleatoire);
+    // printf("argent aleatoire : %s\n",argentAleatoire);
 
     //Formatage du message pour etre |...|...|...|
     char *demandeArgent = message(codeCB, "Demande", argentAleatoire);
@@ -49,12 +49,16 @@ int df2 = atoi(argv[2]);
     // printf("%s", demandeArgent);
 
     //Ecrit dans le tube la demande selon le formatage 
+    fprintf(stderr, "juste avant ecritligne de terminal\n");
     ecritLigne(df1,demandeArgent);
 
+    fprintf(stderr, "juste avant litligne de terminal\n");
     //Codage en dure de la lecture du tube
     char *reponse = litLigne(df2);
 
-    printf("message lue : %s \n", reponse);
+    // printf("reponse lu %s\n",reponse);
+
+    // printf("message lue : %s \n", reponse);
     //Formatage de la comparaison avec le message reçu d'acquisition
     char *accepte = message(codeCB, "Reponse", "1");
 
@@ -64,11 +68,13 @@ int df2 = atoi(argv[2]);
 
     if(strcmp(reponse, accepte) == 0){
         //Payement accepté
-        printf("Payement accepte \n");
+        fprintf(stderr, "payement accepte");
+        // printf("Payement accepte \n");
     }else
     {
         //Payement refusé
-        printf("Payement refuse \n");
+        fprintf(stderr, "payement refuse");
+        // printf("Payement refuse \n");
     }
     
     
