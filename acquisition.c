@@ -1,6 +1,9 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <unistd.h>
+#include <sys/types.h>
+#include <sys/stat.h>
+#include <fcntl.h>
 #include "lectureEcriture.h"
 
 int main(int argc, char const *argv[])
@@ -24,14 +27,15 @@ int main(int argc, char const *argv[])
     pid_fils = fork();
     
     if(pid_fils == 0){
-        execlp("terminal.c",descripteurTubeDemande[1],descripteurTubeReponse[0],NULL);
+        printf("fils\n");
+        execlp("terminal.c","terminal.c","1","0",NULL);
     }
 
     else
     {
-        printf("nous sommes dans le processus 'acquisition'");
-        printf("lecture de la demande : %s",litLigne(descripteurTubeDemande[0]));
-        ecritLigne(descripteurTubeReponse[1],"1");
+        printf("nous sommes dans le processus 'acquisition'\n");
+        // printf("lecture de la demande : %s",litLigne(descripteurTubeDemande[0]));
+        // ecritLigne(descripteurTubeReponse[1],"1");
 
         wait(NULL);
     }
