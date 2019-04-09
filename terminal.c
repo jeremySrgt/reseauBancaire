@@ -14,7 +14,7 @@ int main(int argc, char const *argv[])
 int df1 = atoi(argv[1]);
 int df2 = atoi(argv[2]);
 
-// printf("executable terminal cree a partir de acquisition\n");
+// printf("executable terminal cree a partir de acquisition\n").;
 
 
     //ouvre le fichier qui contient les numéros de carte
