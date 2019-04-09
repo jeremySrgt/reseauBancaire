@@ -9,8 +9,8 @@ alea.o: alea.h alea.c
 terminal.o: terminal.c
 	gcc -Wall -c terminal.c
 
-terminal: terminal.o message.o lectureEcriture.o
-	gcc -Wall terminal.o message.o lectureEcriture.o -o terminal
+terminal: terminal.o message.o lectureEcriture.o alea.o
+	gcc -Wall terminal.o message.o lectureEcriture.o alea.o -o terminal
 
 acquisition.o : acquisition.c
 	gcc -Wall -c acquisition.c
