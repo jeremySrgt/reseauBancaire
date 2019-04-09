@@ -1,4 +1,4 @@
-all:	 TestMessage TestRedirection TestLectureEcriture terminal acquisition
+all:	 TestMessage TestRedirection TestLectureEcriture terminal acquisition autorisation
 
 autorisation.o: autorisation.c
 	gcc -Wall -c autorisation.c

@@ -19,6 +19,7 @@ int main(int argc, char const *argv[])
     dup2(TubeEcritureReponse,1); //ecrit dans argv1
     dup2(TubeLectureDemande,0);//lit dans argv2
 
+    fprintf(stderr,"on est dans autorisation");
     //numero de carte codé et solde en dur le temps d'avoir un fichier de carte client
     char *BDDcarte = "1234123412341234";
     int soldeActuelAssocieCarte = 70;
@@ -64,8 +65,14 @@ int main(int argc, char const *argv[])
 
     //si solde ok et que carte appartien a la banque alors on accepte la transaction
     if(carteOK == 1 && montantOK ==1){
-        ecritLigne(TubeEcritureReponse,"accepte\n");
+        fprintf(stderr,"message envoyé par autorisation a acquisition : %s",message(numeroCarte,"Reponse","1"));
+        ecritLigne(TubeEcritureReponse,message(numeroCarte,"Reponse","1"));
     }
+    else
+    {
+        ecritLigne(TubeEcritureReponse,message(numeroCarte,"Reponse","0"));
+    }
+    
     
     return 0;
 

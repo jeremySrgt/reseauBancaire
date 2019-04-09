@@ -55,6 +55,8 @@ int df2 = atoi(argv[2]);
     fprintf(stderr, "juste avant litligne de terminal\n");
     //Codage en dure de la lecture du tube
     char *reponse = litLigne(df2);
+
+    fprintf(stderr,"reponse recu de acquisition apres traitement par autorisation : %s",reponse);
     // printf("reponse lu %s\n",reponse);
 
     // printf("message lue : %s \n", reponse);
