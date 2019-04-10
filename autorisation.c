@@ -51,7 +51,7 @@ int main(int argc, char const *argv[])
         carteOK = 1;
     }
     else{
-        printf("cette carte n'appartient pas à la banque \n");
+        fprintf(stderr,"cette carte n'appartient pas à la banque \n");
     }
 
     //verif du solde de du compte 
@@ -60,7 +60,7 @@ int main(int argc, char const *argv[])
     }
     else
     {
-        printf("Solde du compte insuffisant \n");
+        fprintf(stderr,"Solde du compte insuffisant \n");
     }
 
     //si solde ok et que carte appartien a la banque alors on accepte la transaction

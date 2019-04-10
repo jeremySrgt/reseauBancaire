@@ -12,8 +12,8 @@ int main(int argc, char const *argv[])
 {
     
 
-int df1 = atoi(argv[1]);
-int df2 = atoi(argv[2]);
+int tubeEcritureDemande = atoi(argv[1]);
+int tubeLectureReponse = atoi(argv[2]);
 
 // printf("executable terminal cree a partir de acquisition\n").;
 
@@ -25,9 +25,9 @@ int df2 = atoi(argv[2]);
     //prend la ligne mais sans le retour chariot
     codeCB[strlen(codeCB)-1] ='\0';
 
-    dup2(df1,1); //ecrit dans argv1
-    // dup2(0,df2);//lit dans argv2
-    dup2(df2,0);
+    dup2(tubeEcritureDemande,1); //ecrit dans argv1
+    // dup2(0,tubeLectureReponse);//lit dans argv2
+    dup2(tubeLectureReponse,0);
 
     //initilisation de la fonction alea du programme alea.h
     aleainit();
@@ -51,11 +51,11 @@ int df2 = atoi(argv[2]);
 
     //Ecrit dans le tube la demande selon le formatage 
     fprintf(stderr, "juste avant ecritligne de terminal\n");
-    ecritLigne(df1,demandeArgent);
+    ecritLigne(tubeEcritureDemande,demandeArgent);
 
     fprintf(stderr, "juste avant litligne de terminal\n");
     //Codage en dure de la lecture du tube
-    char *reponse = litLigne(df2);
+    char *reponse = litLigne(tubeLectureReponse);
 
     fprintf(stderr,"reponse recu de acquisition apres traitement par autorisation : %s",reponse);
     // printf("reponse lu %s\n",reponse);
