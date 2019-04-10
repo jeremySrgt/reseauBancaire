@@ -9,8 +9,8 @@
 
 int main(int argc, char const *argv[])
 {
-    pid_t pid_terminal;
-    pid_t pid_autorisation;
+    // pid_t pid_terminal;
+    // pid_t pid_autorisation;
 
     int descripteurTubeDemandeTerminal[2]; //on lit en fd[0] et on ecrit en fd[1]
     int descripteurTubeReponseTerminal[2];
@@ -39,17 +39,17 @@ int main(int argc, char const *argv[])
         return EXIT_FAILURE;
     }
 
-    pid_terminal = fork();
+    // pid_terminal = fork();
 
     char tubeEcritureTerminal[100];
     char tubeLectureTerminal[100];
 
-    pid_autorisation = fork();
+    // pid_autorisation = fork();
 
     char tubeEnvoiVersAutorisation[100];
     char tubeRecoiDeAutorisation[100];
     
-    if(pid_terminal == 0){
+    if(fork() == 0){
         printf("terminal cree par acquisition\n");
         //utiliser un sprintf()
         sprintf(tubeEcritureTerminal,"%d",descripteurTubeReponseTerminal[0]);
@@ -59,7 +59,7 @@ int main(int argc, char const *argv[])
 
 
     
-    if(pid_autorisation == 0){
+    if(fork() == 0){
         printf("processus autorisation cree par acquisition\n");
         //utiliser un sprintf()
         sprintf(tubeEnvoiVersAutorisation,"%d",descripteurTubeEnvoiVersAutorisation[0]);
@@ -74,10 +74,20 @@ int main(int argc, char const *argv[])
         // printf("lecture de la demande : %s",litLigne(descripteurTubeDemande[0]));
         // ecritLigne(descripteurTubeReponse[1],"1");
         
+        //!!!!! litLigne VIDE LE TUBE A LA LECTURE !!!!!!
 
-        printf("la demande envoyé PAR le terminal est : %s",litLigne(descripteurTubeDemandeTerminal[0]));
 
-        ecritLigne(descripteurTubeEnvoiVersAutorisation[1],litLigne(descripteurTubeDemandeTerminal[0]));
+        // printf("la demande envoyé PAR le terminal est : %s",litLigne(descripteurTubeDemandeTerminal[0]));
+
+        char *demandeDuTerminal = litLigne(descripteurTubeDemandeTerminal[0]);
+
+        printf("la demande envoyé PAR le terminal est : %s",demandeDuTerminal); 
+
+        // printf("just aavant ecrit ligne de acquisition\n");
+
+        ecritLigne(descripteurTubeEnvoiVersAutorisation[1],demandeDuTerminal);
+
+        // printf("just apres ecritligne de acquisition\n");
 
 
         // close(descripteurTubeDemandeTerminal[0]);
@@ -89,7 +99,7 @@ int main(int argc, char const *argv[])
 
         char *reponseAutorisation = litLigne(descripteurTubeRecoiDeAutorisation[0]);
         // strcat(reponseAutorisation,"\n");
-        printf("reponse autorisation : %s",reponseAutorisation);
+        printf("reponse de autorisation : %s",reponseAutorisation);
         ecritLigne(descripteurTubeReponseTerminal[1],reponseAutorisation);
         // close(descripteurTubeDemandeTerminal[1]);
 

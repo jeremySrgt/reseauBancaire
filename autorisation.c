@@ -19,7 +19,7 @@ int main(int argc, char const *argv[])
     dup2(TubeEcritureReponse,1); //ecrit dans argv1
     dup2(TubeLectureDemande,0);//lit dans argv2
 
-    fprintf(stderr,"on est dans autorisation");
+    fprintf(stderr,"on est dans autorisation\n");
     //numero de carte codé et solde en dur le temps d'avoir un fichier de carte client
     char *BDDcarte = "1234123412341234";
     int soldeActuelAssocieCarte = 70;
