@@ -15,7 +15,7 @@ int main(int argc, char const *argv[])
 int df1 = atoi(argv[1]);
 int df2 = atoi(argv[2]);
 
-// printf("executable terminal cree a partir de acquisition\n");
+// printf("executable terminal cree a partir de acquisition\n").;
 
 
     //ouvre le fichier qui contient les numéros de carte
@@ -56,8 +56,8 @@ int df2 = atoi(argv[2]);
     fprintf(stderr, "juste avant litligne de terminal\n");
     //Codage en dure de la lecture du tube
     char *reponse = litLigne(df2);
-    
-    fprintf(stderr, "reponse lu : %s", reponse);
+
+    fprintf(stderr,"reponse recu de acquisition apres traitement par autorisation : %s",reponse);
     // printf("reponse lu %s\n",reponse);
 
     // printf("message lue : %s \n", reponse);
