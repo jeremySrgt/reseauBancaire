@@ -10,6 +10,7 @@
 
 int main(int argc, char const *argv[])
 {
+    while(1){
     int TubeEcritureReponse = atoi(argv[1]);
     int TubeLectureDemande = atoi(argv[2]);
 
@@ -24,7 +25,11 @@ int main(int argc, char const *argv[])
     char *BDDcarte = "1234123412341234";
     int soldeActuelAssocieCarte = 70;
 
+    
+
     char *transactionDemande = litLigne(TubeLectureDemande);
+
+    fprintf(stderr,"transaction emise par le terminal %s\n",transactionDemande);
 
     //TODO mieux initialiser les char 
     char numeroCarte[17];
@@ -35,7 +40,7 @@ int main(int argc, char const *argv[])
         printf("La decoupe du message de transaction a échoué");
     }
 
-    printf("numcb : %s type : %s valeur : %s \n",numeroCarte,type,valeurTransaction);
+    fprintf(stderr,"numcb : %s type : %s valeur : %s \n",numeroCarte,type,valeurTransaction);
 
 
 
@@ -73,7 +78,11 @@ int main(int argc, char const *argv[])
         ecritLigne(TubeEcritureReponse,message(numeroCarte,"Reponse","0"));
     }
     
+    }
     
     return 0;
 
 }
+//Le probleme vient soit du fait que le programme autorisation ne tourne pas en boucle donc il ne cherhce pas sans arret
+// a regarder si les transaction peuvent etre faites
+//ou bien du fait que les char* ou sont stocké les valeur de numcb valeur et type ne sont pas vidés entre deux transactions

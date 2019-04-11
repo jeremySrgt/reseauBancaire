@@ -70,12 +70,12 @@ int tubeLectureReponse = atoi(argv[2]);
 
     if(strcmp(reponse, accepte) == 0){
         //Payement accepté
-        fprintf(stderr, "payement accepte\n");
+        fprintf(stderr, "---------------payement accepte--------------\n");
         // printf("Payement accepte \n");
     }else
     {
         //Payement refusé
-        fprintf(stderr, "payement refuse\n");
+        fprintf(stderr, "--------------payement refuse--------------\n");
         // printf("Payement refuse \n");
     }
     
