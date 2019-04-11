@@ -12,25 +12,7 @@
 
 int main(int argc, char const *argv[])
 {
-// A TESTER ET A FAIRE MARCHER ///////////////////////////////////////
-/////////////////////////////////////////////////////////////////////
-
-    // char *suiteChaine = NULL;
-
-    // int descripteurFichier = open("InfoClient.txt", O_RDONLY);
-    // char *soldeDuCompte = litLigne(descripteurFichier);
-    // fprintf(stderr, "Solde du compte : %s", soldeDuCompte);
-
-    // suiteChaine = strchr(soldeDuCompte, 'd');
-    // if (suiteChaine != NULL) // Si on a trouvé quelque chose
-    // {
-    //     printf("Voici la fin de la chaine a partir du premier d : %s \n", suiteChaine);
-    // }
-
-///////////////////////////////////////////////////////////////////
-//////////////////////////////////////////////////////////////////
-
-
+    while(1){
     int TubeEcritureReponse = atoi(argv[1]);
     int TubeLectureDemande = atoi(argv[2]);
 
@@ -50,7 +32,11 @@ int main(int argc, char const *argv[])
     //char *BDDcarte = "1234123412341234";
     int soldeActuelAssocieCarte = 100000;
 
+    
+
     char *transactionDemande = litLigne(TubeLectureDemande);
+
+    fprintf(stderr,"transaction emise par le terminal %s\n",transactionDemande);
 
     //TODO mieux initialiser les char 
     char numeroCarte[17];
@@ -62,6 +48,8 @@ int main(int argc, char const *argv[])
     }
 
      int montantDemande = atol(valeurTransaction);
+    fprintf(stderr,"numcb : %s type : %s valeur : %s \n",numeroCarte,type,valeurTransaction);
+
 
 
     fprintf(stderr,"numcb : %s type : %s valeur : %s \n",numeroCarte,type,valeurTransaction);
@@ -148,7 +136,11 @@ int main(int argc, char const *argv[])
 
     }
     
+    }
     
     return 0;
 
 }
+//Le probleme vient soit du fait que le programme autorisation ne tourne pas en boucle donc il ne cherhce pas sans arret
+// a regarder si les transaction peuvent etre faites
+//ou bien du fait que les char* ou sont stocké les valeur de numcb valeur et type ne sont pas vidés entre deux transactions
