@@ -1,10 +1,10 @@
-all:	 TestMessage TestRedirection TestLectureEcriture terminal acquisition autorisation
+all:	 TestMessage TestRedirection TestLectureEcriture terminal acquisition autorisation 
 
 autorisation.o: autorisation.c
 	gcc -Wall -c autorisation.c
 
-autorisation: autorisation.o message.o lectureEcriture.o
-	gcc -Wall autorisation.o message.o lectureEcriture.o -o autorisation
+autorisation: autorisation.o message.o lectureEcriture.o annuaire.o alea.o
+	gcc -Wall autorisation.o message.o lectureEcriture.o annuaire.o alea.o -o autorisation
 
 message.o: message.c message.h
 	gcc -Wall -c message.c
@@ -15,14 +15,20 @@ alea.o: alea.h alea.c
 terminal.o: terminal.c
 	gcc -Wall -c terminal.c
 
-terminal: terminal.o message.o lectureEcriture.o alea.o
-	gcc -Wall terminal.o message.o lectureEcriture.o alea.o -o terminal
+terminal: terminal.o message.o lectureEcriture.o alea.o annuaire.o
+	gcc -Wall terminal.o message.o lectureEcriture.o alea.o annuaire.o -o terminal
 
 acquisition.o : acquisition.c
 	gcc -Wall -c acquisition.c
 
 acquisition: acquisition.o lectureEcriture.o
 	gcc -Wall acquisition.o lectureEcriture.o -o acquisition
+
+testAnnuaire: testAnnuaire.c annuaire.o alea.o lectureEcriture.o
+	gcc testAnnuaire.c annuaire.o alea.o lectureEcriture.o -o testAnnuaire
+
+annuaire.o: annuaire.c annuaire.h alea.h lectureEcriture.h
+	gcc -c annuaire.c
 
 TestMessage: message.o alea.o TestMessage.c
 	gcc -Wall TestMessage.c message.o alea.o -o  TestMessage

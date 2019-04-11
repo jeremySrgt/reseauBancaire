@@ -99,8 +99,8 @@ int main(int argc, char const *argv[])
 
         char *reponseAutorisation = litLigne(descripteurTubeRecoiDeAutorisation[0]);
         // strcat(reponseAutorisation,"\n");
+                ecritLigne(descripteurTubeReponseTerminal[1],reponseAutorisation);
         printf("reponse de autorisation : %s",reponseAutorisation);
-        ecritLigne(descripteurTubeReponseTerminal[1],reponseAutorisation);
         // close(descripteurTubeDemandeTerminal[1]);
 
         // close(descripteurTubeReponseTerminal[1]);

@@ -7,6 +7,7 @@
 #include "message.h"
 #include "lectureEcriture.h"
 #include "alea.h"
+#include "annuaire.h"
 
 int main(int argc, char const *argv[])
 {
@@ -15,15 +16,33 @@ int main(int argc, char const *argv[])
 int tubeEcritureDemande = atoi(argv[1]);
 int tubeLectureReponse = atoi(argv[2]);
 
+
+
 // printf("executable terminal cree a partir de acquisition\n").;
 
+    //Création d'un annuaire random 
+    AnnuaireClients *annuaireCree;
+    annuaireCree =  annuaireAleatoire(2, 10);
+    //sauvegarde annuaire crée dans le fichier InfoClient.txt pour autorisation
+    sauvegardeAnnuaire(annuaireCree, "InfoClient.txt");
+    // afficherAnnuaire(annuaireCree);
+
+    /////////////////////////////////////////////////////////////////////////////
+    ////////////////////////////////////////////////////////////////////////////
+
+    // PERMET DE VERIFIER SI ILS APPARTIENNENT A LA BONNE BANQUE
+    // AnnuaireClients *annuaireBis =  annuaireFiltre(annuaireCree, "0000");
+    // afficherAnnuaire(annuaireBis);
+
+    /////////////////////////////////////////////////////////////////////////////
+    ////////////////////////////////////////////////////////////////////////////
 
     //ouvre le fichier qui contient les numéros de carte
     int descripteurFichier = open("InfoClient.txt", O_RDONLY);
     char *codeCB = litLigne(descripteurFichier);
 
     //prend la ligne mais sans le retour chariot
-    codeCB[strlen(codeCB)-1] ='\0';
+    codeCB[strlen("0000000000000000")] ='\0';
 
     dup2(tubeEcritureDemande,1); //ecrit dans argv1
     // dup2(0,tubeLectureReponse);//lit dans argv2
@@ -34,7 +53,7 @@ int tubeLectureReponse = atoi(argv[2]);
     char argentAleatoire[70];
 
     //Convertit le nombre aléatoire en une chaine de caractère
-    sprintf(argentAleatoire, "%d", alea(5,20));
+    sprintf(argentAleatoire, "%d", alea(5,100000));
     // printf("argent aleatoire : %s\n",argentAleatoire);
 
     //Formatage du message pour etre |...|...|...|
@@ -80,7 +99,7 @@ int tubeLectureReponse = atoi(argv[2]);
     }
     
     
-    return 0;
-}
+     return 0;
+ }
 
 
