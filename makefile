@@ -19,10 +19,10 @@ terminal: terminal.o message.o lectureEcriture.o alea.o annuaire.o
 	gcc -Wall terminal.o message.o lectureEcriture.o alea.o annuaire.o -o terminal
 
 acquisition.o : acquisition.c
-	gcc -Wall -c acquisition.c
+	gcc -Wall -lpthread -c acquisition.c
 
 acquisition: acquisition.o lectureEcriture.o
-	gcc -Wall acquisition.o lectureEcriture.o -o acquisition
+	gcc -Wall -lpthread acquisition.o lectureEcriture.o -o acquisition
 
 testAnnuaire: testAnnuaire.c annuaire.o alea.o lectureEcriture.o
 	gcc testAnnuaire.c annuaire.o alea.o lectureEcriture.o -o testAnnuaire
