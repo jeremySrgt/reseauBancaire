@@ -49,7 +49,7 @@ int main(int argc, char const *argv[])
     fprintf(stderr, "Code Cb aleatoire : %s \n", codeCbAleatoire);
 
     int soldeActuelCompte = annuaireClient->donnees[nombreAleatoire].solde;
-    fprintf(stderr, "Solde actuel du compte : %d", soldeActuelCompte);
+    fprintf(stderr, "Solde actuel du compte : %d\n", soldeActuelCompte);
 
     // On choisit un nombre aléatoire pour une demande de montant
     // Convertit le nombre aléatoire en une chaine de caractère

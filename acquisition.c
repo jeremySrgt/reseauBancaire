@@ -5,6 +5,7 @@
 #include <sys/stat.h>
 #include <string.h>
 #include <fcntl.h>
+#include <pthread.h>
 #include "lectureEcriture.h"
 
 /***************************************************************************************************************/
@@ -12,10 +13,20 @@
 /* il permet aussi de communiquer avec le serveur interbancaire */
 /***************************************************************************************************************/
 
+void *routineThreadTerminaux(void *args);
+
+struct argsThreadsLiaison
+{
+    int ecritureVersAutorisation;
+    int lectureDeTerminal;
+    int numeroDuTerminal;
+    //ces champs sont juste pour les test
+    int recoiDeAutorisation;
+    int ecritVersTerminal;
+};
 
 int main(int argc, char const *argv[])
 {
-
 
     if (argc != 2)
     {
@@ -25,7 +36,7 @@ int main(int argc, char const *argv[])
 
     int nombreTerminaux = atoi(argv[1]);
 
-    
+
     //creation des tubes de communication avec Autorisation
     int descripteurTubeEnvoiVersAutorisation[2];
     int descripteurTubeRecoiDeAutorisation[2];
@@ -44,10 +55,6 @@ int main(int argc, char const *argv[])
         return EXIT_FAILURE;
     }
 
-
-    
-    
-
     //creation d'un tableau a 2 dimensions pour contenir les tubes de commincation avec les terminaux
     int tableauDeTubeEcritureDansTerminal[nombreTerminaux][2];
     int tableauDeTubeLectureDuTerminal[nombreTerminaux][2];
@@ -64,10 +71,37 @@ int main(int argc, char const *argv[])
         pipe(tableauDeTubeLectureDuTerminal[c]);
     }
 
+    struct argsThreadsLiaison *argumentsDuThread = (struct argsThreadsLiaison *)malloc(sizeof(struct argsThreadsLiaison));
+    //creation de n thread pour n terminaux
+    pthread_t *threadsTerminaux = (pthread_t *)malloc(nombreTerminaux * sizeof(pthread_t));
+
+    printf("FD envoi vers Autorisation %d\n",descripteurTubeEnvoiVersAutorisation[1]);
+    printf("FD recoi de Autorisation %d\n",descripteurTubeRecoiDeAutorisation[0]);
+
+    argumentsDuThread->ecritureVersAutorisation = descripteurTubeEnvoiVersAutorisation[1];
+    //champs de test
+    argumentsDuThread->recoiDeAutorisation = descripteurTubeRecoiDeAutorisation[0];
+
+    //pas à la bonne place
+    // for (int d = 0; d < nombreTerminaux; d++)
+    // {
+    //     pthread_create(&threadsTerminaux[d], NULL, routineThreadTerminaux, (void *) argumentThreadLiaison);
+    // }
+
     int i = 0;
 
     while (i < nombreTerminaux)
     {
+        
+        argumentsDuThread->lectureDeTerminal = tableauDeTubeLectureDuTerminal[i][0];
+        argumentsDuThread->numeroDuTerminal = i;
+        //champs de test thread
+        argumentsDuThread->ecritVersTerminal = tableauDeTubeEcritureDansTerminal[i][1];
+
+        
+        pthread_create(&threadsTerminaux[i], NULL, routineThreadTerminaux, (void *) argumentsDuThread);
+
+
         if (fork() == 0)
         {
             printf("terminal %d cree par acquisition\n", i);
@@ -78,10 +112,11 @@ int main(int argc, char const *argv[])
             sprintf(tubeEcritureDansTerminal, "%d", tableauDeTubeEcritureDansTerminal[i][0]);
             sprintf(tubeLectureDuTerminal, "%d", tableauDeTubeLectureDuTerminal[i][1]);
 
-            printf("tubeEcritureDansTerminal %s\n",tubeEcritureDansTerminal);
-            printf("tubeLectureDuTerminal %s\n",tubeLectureDuTerminal);
-            
-            execl("terminal","terminal", tubeLectureDuTerminal, tubeEcritureDansTerminal, NULL);
+
+            printf("tubeEcritureDansTerminal %s\n", tubeEcritureDansTerminal);
+            printf("tubeLectureDuTerminal %s\n", tubeLectureDuTerminal);
+
+            execl("terminal", "terminal", tubeLectureDuTerminal, tubeEcritureDansTerminal, NULL);
             //execution de xterm sous linux (xterm ne fonctionne pas sous mac os)
             // execlp("xterm","xterm","-hold","-e","./terminal",tubeLectureDuTerminal, tubeEcritureDansTerminal, NULL);
         }
@@ -100,29 +135,50 @@ int main(int argc, char const *argv[])
         // execlp("xterm","xterm","-hold","-e","./autorisation",tubeRecoiDeAutorisation, tubeEnvoiVersAutorisation, NULL);
     }
 
-    int a = 0;
+    // int a = 0;
 
-    while (a < nombreTerminaux)
-    {
+    // while (a < nombreTerminaux)
+    // {
 
-        char *demandeDuTerminal = litLigne(tableauDeTubeLectureDuTerminal[a][0]);
+    //     char *demandeDuTerminal = litLigne(tableauDeTubeLectureDuTerminal[a][0]);
 
-        printf("la demande envoyé PAR le terminal %d (ce nombre ne correspond pas vraiment au numéro exact du terminal) est : %s\n",a, demandeDuTerminal);
-        ecritLigne(descripteurTubeEnvoiVersAutorisation[1], demandeDuTerminal);
+    //     printf("la demande envoyé PAR le terminal %d (ce nombre ne correspond pas vraiment au numéro exact du terminal) est : %s\n", a, demandeDuTerminal);
+    //     ecritLigne(descripteurTubeEnvoiVersAutorisation[1], demandeDuTerminal);
 
-        char *reponseAutorisation = litLigne(descripteurTubeRecoiDeAutorisation[0]);
+    //     char *reponseAutorisation = litLigne(descripteurTubeRecoiDeAutorisation[0]);
 
-        printf("reponse de autorisation : %s\n", reponseAutorisation);
-        ecritLigne(tableauDeTubeEcritureDansTerminal[a][1], reponseAutorisation);
+    //     printf("reponse de autorisation : %s\n", reponseAutorisation);
+    //     ecritLigne(tableauDeTubeEcritureDansTerminal[a][1], reponseAutorisation);
 
-        a++;
-    }
+    //     a++;
+    // }
 
     // close(descripteurTubeDemandeTerminal[0]);
     // close(descripteurTubeDemandeTerminal[1]);
 
     wait(NULL);
 
-
     return 0;
+}
+
+void *routineThreadTerminaux(void *args){
+
+    printf("on est dans le thread\n");
+
+    printf("FD ecriture autorisation: %d\n", ((struct argsThreadsLiaison*)args)->ecritureVersAutorisation);
+    printf("FD lecture de Terminal: %d\n", ((struct argsThreadsLiaison*)args)->lectureDeTerminal);
+    printf("numero de Terminal : %d\n", ((struct argsThreadsLiaison*)args)->numeroDuTerminal);
+
+    char *demandeDuTerminal = litLigne(((struct argsThreadsLiaison*)args)->lectureDeTerminal);
+
+        printf("la demande envoyé PAR le terminal %d est : %s\n",((struct argsThreadsLiaison*)args)->numeroDuTerminal , demandeDuTerminal);
+        ecritLigne(((struct argsThreadsLiaison*)args)->ecritureVersAutorisation, demandeDuTerminal);
+
+        //champs pour test
+
+        char *reponseAutorisation = litLigne(((struct argsThreadsLiaison*)args)->recoiDeAutorisation);
+
+        printf("reponse de autorisation : %s\n", reponseAutorisation);
+        ecritLigne(((struct argsThreadsLiaison*)args)->ecritVersTerminal, reponseAutorisation);
+
 }
