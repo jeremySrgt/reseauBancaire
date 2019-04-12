@@ -20,62 +20,58 @@ int tubeLectureReponse = atoi(argv[2]);
 
 // printf("executable terminal cree a partir de acquisition\n").;
 
-    //Création d'un annuaire random 
+  /*****************************************************************/
+  /* Création d'un annuaire composé de n banque et n client        */
+  /* L'annuaire est ensuite sauvegarder dans un fichier texte      */
+  /*****************************************************************/
+
     // AnnuaireClients *annuaireCree;
     // annuaireCree =  annuaireAleatoire(2, 20);
     // //sauvegarde annuaire crée dans le fichier InfoClient.txt pour autorisation
     // sauvegardeAnnuaire(annuaireCree, "InfoClient.txt");
-    //afficherAnnuaire(annuaireCree);
 
+    
+    // On récupère l'annuaire dans une variable de type AnnuaireClient
+    // On utilise cette variable afin de récupérer un numéro de CB aléatoire dans l'annuaire
+    // On récupère également le solde correspondant au compte afin de l'afficher dans le terminal
 
-    //ouvre le fichier qui contient les numéros de carte
-    // int descripteurFichier = open("InfoClient.txt", O_RDONLY);
-
-    // char *codeCB = litLigne(descripteurFichier);
+    aleainit();
+    int nombreAleatoire = alea(1,20);
 
     AnnuaireClients *annuaireClient = annuaire("InfoClient.txt");
-    char *codeCbAleatoire = annuaireClient->donnees[alea(1,20)].CB;
+    char *codeCbAleatoire = annuaireClient->donnees[nombreAleatoire].CB;
     fprintf(stderr, "Code Cb aleatoire : %s \n", codeCbAleatoire);
 
-    //prend la ligne mais sans le retour chariot
-    // codeCB[strlen("0000000000000000")] ='\0';
+    int soldeActuelCompte = annuaireClient->donnees[nombreAleatoire].solde;
+    fprintf(stderr, "Solde actuel du compte : %d", soldeActuelCompte);
+
+
+    // Permet de rediriger dans l'entrée et la sortie des tubes 
 
     dup2(tubeEcritureDemande,1); //ecrit dans argv1
-    // dup2(0,tubeLectureReponse);//lit dans argv2
-    dup2(tubeLectureReponse,0);
+    dup2(tubeLectureReponse,0);//lit dans argv2
 
-    //initilisation de la fonction alea du programme alea.h
-    aleainit();
+
+    // On choisit un nombre aléatoire pour une demande de montant
+    // Convertit le nombre aléatoire en une chaine de caractère
+
     char argentAleatoire[70];
-
-    //Convertit le nombre aléatoire en une chaine de caractère
     sprintf(argentAleatoire, "%d", alea(5,100000));
-    // printf("argent aleatoire : %s\n",argentAleatoire);
 
-    //Formatage du message pour etre |...|...|...|
+    // Formatage du message pour etre selon la forme demandé |...|...|...|
+
     char *demandeArgent = message(codeCbAleatoire, "Demande", argentAleatoire);
 
 
 
-    // int decoupage = decoupe(demandeArgent,codeCB,"demande",argentAleatoire);
 
-    // if(decoupage==0){
-    //     printf("erreur decoupage message");
-    // }
-    // printf("%s", demandeArgent);
+    //Ecrit dans le tube la demande selon le protocole
 
-    //Ecrit dans le tube la demande selon le formatage 
-    fprintf(stderr, "juste avant ecritligne de terminal\n");
     ecritLigne(tubeEcritureDemande,demandeArgent);
-
-    fprintf(stderr, "juste avant litligne de terminal\n");
-    //Codage en dure de la lecture du tube
     char *reponse = litLigne(tubeLectureReponse);
 
     fprintf(stderr,"reponse recu de acquisition apres traitement par autorisation : %s",reponse);
-    // printf("reponse lu %s\n",reponse);
 
-    // printf("message lue : %s \n", reponse);
     //Formatage de la comparaison avec le message reçu d'acquisition
     char *accepte = message(codeCbAleatoire, "Reponse", "1");
 
@@ -85,15 +81,12 @@ int tubeLectureReponse = atoi(argv[2]);
 
     if(strcmp(reponse, accepte) == 0){
         //Payement accepté
-        fprintf(stderr, "---------------payement accepte--------------\n");
-        // printf("Payement accepte \n");
+        fprintf(stderr, "---------------------payement accepte---------------------\n");
     }else
     {
         //Payement refusé
-        fprintf(stderr, "--------------payement refuse--------------\n");
-        // printf("Payement refuse \n");
+        fprintf(stderr, "---------------------payement refuse---------------------\n");
     }
-    
     
      return 0;
  }
