@@ -17,11 +17,17 @@
 
 int main(int argc, char const *argv[])
 {
+    
 
     //Convertit en int les arguments passé au main
 
     int tubeEcritureDemande = atoi(argv[1]);
     int tubeLectureReponse = atoi(argv[2]);
+
+    // Permet de rediriger dans l'entrée et la sortie des tubes
+
+    dup2(tubeEcritureDemande, 1); //ecrit dans argv1
+    dup2(tubeLectureReponse, 0);  //lit dans argv2
 
     // Création d'un annuaire composé de n banque et n client
     // L'annuaire est ensuite sauvegarder dans un fichier texte
@@ -44,11 +50,6 @@ int main(int argc, char const *argv[])
 
     int soldeActuelCompte = annuaireClient->donnees[nombreAleatoire].solde;
     fprintf(stderr, "Solde actuel du compte : %d", soldeActuelCompte);
-
-    // Permet de rediriger dans l'entrée et la sortie des tubes
-
-    dup2(tubeEcritureDemande, 1); //ecrit dans argv1
-    dup2(tubeLectureReponse, 0);  //lit dans argv2
 
     // On choisit un nombre aléatoire pour une demande de montant
     // Convertit le nombre aléatoire en une chaine de caractère

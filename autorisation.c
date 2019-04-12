@@ -13,31 +13,31 @@
 int main(int argc, char const *argv[])
 {
 
-while(1){
-    AnnuaireClients *annuaireClient = annuaire("InfoClient.txt");
+/*******************************************************************************************/
+/* Le serveur autorisation reçoit la demande de terminal après son passage par acquisition */
+/* Il reverifie si le compte voulant retirer est bien présent dans sa banque, puis vérifie */
+/* que la solde du compte est suffisante et il renvoi un message adapté.                   */
+/*******************************************************************************************/
 
+
+while(1){
+
+    //Convertit en int les arguments passé au main
 
     int TubeEcritureReponse = atoi(argv[1]);
     int TubeLectureDemande = atoi(argv[2]);
 
+    // On récupère l'annuaire contenant les numéro de carte et leur solde
+
+    AnnuaireClients *annuaireClient = annuaire("InfoClient.txt");
+   
     int carteOK = 0;
     int montantOK = 0;
 
+    // Permet de rediriger dans l'entrée et la sortie des tubes
+
     dup2(TubeEcritureReponse,1); //ecrit dans argv1
-    dup2(TubeLectureDemande,0);//lit dans argv2
-
-    // Récupération de l'annuaire qui est dans le fichier texte
-    // afficherAnnuaire(annuaireClient); 
-
-
-    fprintf(stderr,"on est dans autorisation\n");
-    //numero de carte codé et solde en dur le temps d'avoir un fichier de carte client
-    //char *BDDcarte = "1234123412341234";
-    //Faut chopper le solde correspondant au compte traité
-    // int soldeActuelAssocieCarte = 100;
-
-
-    
+    dup2(TubeLectureDemande,0);//lit dans argv2 
 
     char *transactionDemande = litLigne(TubeLectureDemande);
 
@@ -48,23 +48,24 @@ while(1){
     char type[20];
     char valeurTransaction[100];
 
+    // On decoupe le message reçu de terminal
+
     if(decoupe(transactionDemande,numeroCarte,type,valeurTransaction) == 0){
         printf("La decoupe du message de transaction a échoué");
     }
 
-     int montantDemande = atol(valeurTransaction);
+    int montantDemande = atol(valeurTransaction);
     fprintf(stderr,"numcb : %s type : %s valeur : %s \n",numeroCarte,type,valeurTransaction);
 
 
+    // On recupère le solde du client associé au compte que l'on traite
 
-
-    //  Client *soldeDuCompte = client(annuaire("InfoClient.txt"), numeroCarte);
-
-     Client *clientAttenteAutorisation = client(annuaireClient, numeroCarte);
-     int soldeClientActuel = clientAttenteAutorisation->solde;
+    Client *clientAttenteAutorisation = client(annuaireClient, numeroCarte);
+    int soldeClientActuel = clientAttenteAutorisation->solde;
     fprintf(stderr, "Solde du client actuel %d \n", soldeClientActuel);
 
-    // On recupère le code de la CB pour ensuite le comparer avec la BDD et voir si la carte existe
+    // On recupère le code de la CB pour ensuite le comparer avec l'annuaire et voir si la carte existe
+
     if(clientAttenteAutorisation != NULL){
         carteOK =1;
         fprintf(stderr, "Numéro de carte OK\n");
@@ -72,7 +73,8 @@ while(1){
     {
         fprintf(stderr, "Ce numéro n'appartient pas à la banque \n");
     }
-        //verif du solde du compte 
+    //verification de la  du solde du compte
+
     if(soldeClientActuel >= montantDemande){
         montantOK = 1;
         fprintf(stderr, "Solde OK \n");
@@ -83,71 +85,20 @@ while(1){
     }
     
 
-//     //ce qui va etre lu dans le tube va etre selon le protocle de message CAD XXXX|XXXX|XXXX donc il faudra proceder a une decoupe
+    // Si la carte appartient bien à cette banque et qu'il y a assez d'argent sur le code pour la transaction on autorise le retrait
+    // sinon on refuse et on envoi le message correspondant selon le protocole
 
-//     //convertion en int du numero de carte recu
-//     // int numeroCarteRecu = atoi(numeroCarte);
-
-
-//     //comparaison du numero de carte recu avec la BDD de carte de la banque
-//     if(strcmp(numeroCarte,BDDcarte) == 0 ){
-//         carteOK = 1;
-//     }
-//     else{
-//         fprintf(stderr,"cette carte n'appartient pas à la banque \n");
-//     }
-
-//     //verif du solde de du compte 
-//     if(soldeActuelAssocieCarte >= montantDemande){
-//         montantOK = 1;
-//     }
-//     else
-//     {
-//         fprintf(stderr,"Solde du compte insuffisant \n");
-//     }
-
-// //     A FAIRE MARCHER QUAND LA VENU DE TERMINAL EST BONNE
-
-// //     AnnuaireClients *annuaireClient = annuaireAleatoire(2, 2);
-// //     afficherAnnuaire(annuaireClient);
-
-// // if(client(annuaireClient, numeroCarte) == NULL ){
-// //         carteOK = 1;
-// //         fprintf(stderr, "Louuuuurd ça marche \n");
-// //     }
-// //     else{
-// //         fprintf(stderr,"cette carte n'appartient pas à la banque \n");
-// //     }
-
-//     //verif du solde de du compte 
-//     if(soldeActuelAssocieCarte >= montantDemande){
-//         montantOK = 1;
-//     }
-//     else
-//     {
-//         fprintf(stderr,"Solde du compte insuffisant \n");
-//     }
-
-
-    //si solde ok et que carte appartien a la banque alors on accepte la transaction
     if(carteOK == 1 && montantOK ==1){
         ecritLigne(TubeEcritureReponse,message(numeroCarte,"Reponse","1"));
         fprintf(stderr,"message envoyé par autorisation a acquisition quand on accepte le payement: %s",message(numeroCarte,"Reponse","1"));
-
     }
     else
     {
-        fprintf(stderr,"avant ecritligne de refus de payement %s \n",message(numeroCarte,"Reponse","0"));
         ecritLigne(TubeEcritureReponse,message(numeroCarte,"Reponse","0"));
         fprintf(stderr, "Message envoyé par autorisation a acquisition quand il y a refus de payement : %s", message(numeroCarte, "Reponse", "0"));
-
     }
     
-
 }
     return 0;
 
 }
-//Le probleme vient soit du fait que le programme autorisation ne tourne pas en boucle donc il ne cherhce pas sans arret
-// a regarder si les transaction peuvent etre faites
-//ou bien du fait que les char* ou sont stocké les valeur de numcb valeur et type ne sont pas vidés entre deux transactions
