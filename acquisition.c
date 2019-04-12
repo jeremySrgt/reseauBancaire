@@ -14,6 +14,7 @@
 /***************************************************************************************************************/
 
 void *routineThreadTerminaux(void *args);
+void *fonctionThreadRoutage(void *inputRoutage);
 
 struct argsThreadsLiaison
 {
@@ -25,8 +26,20 @@ struct argsThreadsLiaison
     int ecritVersTerminal;
 };
 
-int main(int argc, char const *argv[])
+
+
+struct argumentsRoutage{
+        int recoiDeAutorisation;
+        int ecritDansLeTerminal;
+        
+        
+};
+
+
+
+int main(int argc, char const *argv[]) 
 {
+    
 
     if (argc != 2)
     {
@@ -39,17 +52,17 @@ int main(int argc, char const *argv[])
 
     //creation des tubes de communication avec Autorisation
     int descripteurTubeEnvoiVersAutorisation[2];
-    int descripteurTubeRecoiDeAutorisation[2];
+    int descripteurTuberecoiDeAutorisation[2];
 
     char tubeEnvoiVersAutorisation[100];
-    char tubeRecoiDeAutorisation[100];
-
+    char tuberecoiDeAutorisation[100];
+    
     if (pipe(descripteurTubeEnvoiVersAutorisation) != 0)
     {
         fprintf(stderr, "Erreur de creation du tube.\n");
         return EXIT_FAILURE;
     }
-    if (pipe(descripteurTubeRecoiDeAutorisation) != 0)
+    if (pipe(descripteurTuberecoiDeAutorisation) != 0)
     {
         fprintf(stderr, "Erreur de creation du tube.\n");
         return EXIT_FAILURE;
@@ -76,17 +89,25 @@ int main(int argc, char const *argv[])
     pthread_t *threadsTerminaux = (pthread_t *)malloc(nombreTerminaux * sizeof(pthread_t));
 
     printf("FD envoi vers Autorisation %d\n",descripteurTubeEnvoiVersAutorisation[1]);
-    printf("FD recoi de Autorisation %d\n",descripteurTubeRecoiDeAutorisation[0]);
+    printf("FD recoi de Autorisation %d\n",descripteurTuberecoiDeAutorisation[0]);
 
     argumentsDuThread->ecritureVersAutorisation = descripteurTubeEnvoiVersAutorisation[1];
     //champs de test
-    argumentsDuThread->recoiDeAutorisation = descripteurTubeRecoiDeAutorisation[0];
+    argumentsDuThread->recoiDeAutorisation = descripteurTuberecoiDeAutorisation[0];
 
     //pas à la bonne place
     // for (int d = 0; d < nombreTerminaux; d++)
     // {
     //     pthread_create(&threadsTerminaux[d], NULL, routineThreadTerminaux, (void *) argumentThreadLiaison);
     // }
+    struct argumentsRoutage *argumentRoutageInitialisation = (struct argumentsRoutage *)malloc(sizeof(struct argumentsRoutage));
+
+    pthread_t threadRoutage;
+    pthread_create(&threadRoutage, NULL, fonctionThreadRoutage, (void*)argumentRoutageInitialisation);
+
+    argumentRoutageInitialisation->recoiDeAutorisation = descripteurTuberecoiDeAutorisation[0];
+
+    argumentRoutageInitialisation->ecritDansLeTerminal = tableauDeTubeEcritureDansTerminal[1][1];
 
     int i = 0;
 
@@ -130,9 +151,9 @@ int main(int argc, char const *argv[])
         printf("processus autorisation cree par acquisition\n");
 
         sprintf(tubeEnvoiVersAutorisation, "%d", descripteurTubeEnvoiVersAutorisation[0]);
-        sprintf(tubeRecoiDeAutorisation, "%d", descripteurTubeRecoiDeAutorisation[1]);
-        execl("autorisation", "autorisation", tubeRecoiDeAutorisation, tubeEnvoiVersAutorisation, NULL);
-        // execlp("xterm","xterm","-hold","-e","./autorisation",tubeRecoiDeAutorisation, tubeEnvoiVersAutorisation, NULL);
+        sprintf(tuberecoiDeAutorisation, "%d", descripteurTuberecoiDeAutorisation[1]);
+        execl("autorisation", "autorisation", tuberecoiDeAutorisation, tubeEnvoiVersAutorisation, NULL);
+        // execlp("xterm","xterm","-hold","-e","./autorisation",tuberecoiDeAutorisation, tubeEnvoiVersAutorisation, NULL);
     }
 
     // int a = 0;
@@ -145,7 +166,7 @@ int main(int argc, char const *argv[])
     //     printf("la demande envoyé PAR le terminal %d (ce nombre ne correspond pas vraiment au numéro exact du terminal) est : %s\n", a, demandeDuTerminal);
     //     ecritLigne(descripteurTubeEnvoiVersAutorisation[1], demandeDuTerminal);
 
-    //     char *reponseAutorisation = litLigne(descripteurTubeRecoiDeAutorisation[0]);
+        // char *reponseAutorisation = litLigne(descripteurTuberecoiDeAutorisation[0]);
 
     //     printf("reponse de autorisation : %s\n", reponseAutorisation);
     //     ecritLigne(tableauDeTubeEcritureDansTerminal[a][1], reponseAutorisation);
@@ -153,8 +174,6 @@ int main(int argc, char const *argv[])
     //     a++;
     // }
 
-    // close(descripteurTubeDemandeTerminal[0]);
-    // close(descripteurTubeDemandeTerminal[1]);
 
     wait(NULL);
 
@@ -181,4 +200,19 @@ void *routineThreadTerminaux(void *args){
         printf("reponse de autorisation : %s\n", reponseAutorisation);
         ecritLigne(((struct argsThreadsLiaison*)args)->ecritVersTerminal, reponseAutorisation);
 
+
+    return NULL; 
+}
+
+void *fonctionThreadRoutage(void *inputRoutage){
+
+    printf("Entrer dans le thread de routage \n");
+    printf("Ce qui y avait dans le tube sortant d'autorisation : %d \n", ((struct argumentsRoutage*)inputRoutage)-> recoiDeAutorisation);
+
+    char *reponseDeAutorisation =litLigne(((struct argumentsRoutage*)inputRoutage)-> recoiDeAutorisation);
+    ecritLigne((((struct argumentsRoutage*)inputRoutage)-> ecritDansLeTerminal), reponseDeAutorisation);
+    printf("cette reponse doit rejoindre le terminale avec le message : %s \n",reponseDeAutorisation);
+
+
+    return NULL;
 }
