@@ -12,7 +12,11 @@
 
 int main(int argc, char const *argv[])
 {
-    while(1){
+
+while(1){
+    AnnuaireClients *annuaireClient = annuaire("InfoClient.txt");
+
+
     int TubeEcritureReponse = atoi(argv[1]);
     int TubeLectureDemande = atoi(argv[2]);
 
@@ -23,14 +27,15 @@ int main(int argc, char const *argv[])
     dup2(TubeLectureDemande,0);//lit dans argv2
 
     // Récupération de l'annuaire qui est dans le fichier texte
-    AnnuaireClients *annuaireClient = annuaire("InfoClient.txt");
     // afficherAnnuaire(annuaireClient); 
 
 
     fprintf(stderr,"on est dans autorisation\n");
     //numero de carte codé et solde en dur le temps d'avoir un fichier de carte client
     //char *BDDcarte = "1234123412341234";
-    int soldeActuelAssocieCarte = 100000;
+    //Faut chopper le solde correspondant au compte traité
+    // int soldeActuelAssocieCarte = 100;
+
 
     
 
@@ -52,23 +57,25 @@ int main(int argc, char const *argv[])
 
 
 
-    fprintf(stderr,"numcb : %s type : %s valeur : %s \n",numeroCarte,type,valeurTransaction);
 
     //  Client *soldeDuCompte = client(annuaire("InfoClient.txt"), numeroCarte);
 
+     Client *clientAttenteAutorisation = client(annuaireClient, numeroCarte);
+     int soldeClientActuel = clientAttenteAutorisation->solde;
+    fprintf(stderr, "Solde du client actuel %d \n", soldeClientActuel);
 
     // On recupère le code de la CB pour ensuite le comparer avec la BDD et voir si la carte existe
-    if(client(annuaireClient, numeroCarte) == NULL){
+    if(clientAttenteAutorisation != NULL){
         carteOK =1;
-        fprintf(stderr, "gg tu peux regarder si t'a assez de thune\n");
+        fprintf(stderr, "Numéro de carte OK\n");
     }else
     {
-        fprintf(stderr, "C'est pas ta banque   \n");
+        fprintf(stderr, "Ce numéro n'appartient pas à la banque \n");
     }
-        //verif du solde de du compte 
-    if(soldeActuelAssocieCarte >= montantDemande){
+        //verif du solde du compte 
+    if(soldeClientActuel >= montantDemande){
         montantOK = 1;
-        fprintf(stderr, "Woaow la richesse \n");
+        fprintf(stderr, "Solde OK \n");
     }
     else
     {
@@ -132,12 +139,12 @@ int main(int argc, char const *argv[])
     {
         fprintf(stderr,"avant ecritligne de refus de payement %s \n",message(numeroCarte,"Reponse","0"));
         ecritLigne(TubeEcritureReponse,message(numeroCarte,"Reponse","0"));
-        fprintf(stderr, "Messgae envoyé par autorisation a acquisition quand il y a refus de payement : %s", message(numeroCarte, "Reponse", "0"));
+        fprintf(stderr, "Message envoyé par autorisation a acquisition quand il y a refus de payement : %s", message(numeroCarte, "Reponse", "0"));
 
     }
     
-    }
-    
+
+}
     return 0;
 
 }

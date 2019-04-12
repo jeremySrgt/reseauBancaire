@@ -21,28 +21,24 @@ int tubeLectureReponse = atoi(argv[2]);
 // printf("executable terminal cree a partir de acquisition\n").;
 
     //Création d'un annuaire random 
-    AnnuaireClients *annuaireCree;
-    annuaireCree =  annuaireAleatoire(2, 10);
-    //sauvegarde annuaire crée dans le fichier InfoClient.txt pour autorisation
-    sauvegardeAnnuaire(annuaireCree, "InfoClient.txt");
-    // afficherAnnuaire(annuaireCree);
+    // AnnuaireClients *annuaireCree;
+    // annuaireCree =  annuaireAleatoire(2, 20);
+    // //sauvegarde annuaire crée dans le fichier InfoClient.txt pour autorisation
+    // sauvegardeAnnuaire(annuaireCree, "InfoClient.txt");
+    //afficherAnnuaire(annuaireCree);
 
-    /////////////////////////////////////////////////////////////////////////////
-    ////////////////////////////////////////////////////////////////////////////
-
-    // PERMET DE VERIFIER SI ILS APPARTIENNENT A LA BONNE BANQUE
-    // AnnuaireClients *annuaireBis =  annuaireFiltre(annuaireCree, "0000");
-    // afficherAnnuaire(annuaireBis);
-
-    /////////////////////////////////////////////////////////////////////////////
-    ////////////////////////////////////////////////////////////////////////////
 
     //ouvre le fichier qui contient les numéros de carte
-    int descripteurFichier = open("InfoClient.txt", O_RDONLY);
-    char *codeCB = litLigne(descripteurFichier);
+    // int descripteurFichier = open("InfoClient.txt", O_RDONLY);
+
+    // char *codeCB = litLigne(descripteurFichier);
+
+    AnnuaireClients *annuaireClient = annuaire("InfoClient.txt");
+    char *codeCbAleatoire = annuaireClient->donnees[alea(1,20)].CB;
+    fprintf(stderr, "Code Cb aleatoire : %s \n", codeCbAleatoire);
 
     //prend la ligne mais sans le retour chariot
-    codeCB[strlen("0000000000000000")] ='\0';
+    // codeCB[strlen("0000000000000000")] ='\0';
 
     dup2(tubeEcritureDemande,1); //ecrit dans argv1
     // dup2(0,tubeLectureReponse);//lit dans argv2
@@ -57,7 +53,7 @@ int tubeLectureReponse = atoi(argv[2]);
     // printf("argent aleatoire : %s\n",argentAleatoire);
 
     //Formatage du message pour etre |...|...|...|
-    char *demandeArgent = message(codeCB, "Demande", argentAleatoire);
+    char *demandeArgent = message(codeCbAleatoire, "Demande", argentAleatoire);
 
 
 
@@ -81,7 +77,7 @@ int tubeLectureReponse = atoi(argv[2]);
 
     // printf("message lue : %s \n", reponse);
     //Formatage de la comparaison avec le message reçu d'acquisition
-    char *accepte = message(codeCB, "Reponse", "1");
+    char *accepte = message(codeCbAleatoire, "Reponse", "1");
 
 
     // Traitement de l'affichage en fonction du retour du serveur autorisation
