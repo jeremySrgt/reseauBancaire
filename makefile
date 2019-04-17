@@ -21,8 +21,8 @@ terminal: terminal.o message.o lectureEcriture.o alea.o annuaire.o
 acquisition.o : acquisition.c
 	gcc -Wall -lpthread -c acquisition.c
 
-acquisition: acquisition.o lectureEcriture.o
-	gcc -Wall -lpthread acquisition.o lectureEcriture.o -o acquisition
+acquisition: acquisition.o lectureEcriture.o message.o
+	gcc -Wall -lpthread acquisition.o lectureEcriture.o message.o -o acquisition
 
 testAnnuaire: testAnnuaire.c annuaire.o alea.o lectureEcriture.o
 	gcc testAnnuaire.c annuaire.o alea.o lectureEcriture.o -o testAnnuaire
