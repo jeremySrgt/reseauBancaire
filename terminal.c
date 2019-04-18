@@ -41,8 +41,15 @@ int main(int argc, char const *argv[])
     // On utilise cette variable afin de récupérer un numéro de CB aléatoire dans l'annuaire
     // On récupère également le solde correspondant au compte afin de l'afficher dans le terminal
 
-    aleainit();
-    int nombreAleatoire = alea(1, 20);
+
+
+
+    // aleainit();
+    // int nombreAleatoire = alea(1, 20);
+
+    srand(clock());
+
+    int nombreAleatoire = rand() % 20;
 
     AnnuaireClients *annuaireClient = annuaire("InfoClient.txt");
     char *codeCbAleatoire = annuaireClient->donnees[nombreAleatoire].CB;

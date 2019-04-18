@@ -17,13 +17,15 @@
 void *routineThreadTerminaux(void *args);
 void *fonctionThreadRoutage(void *inputRoutage);
 
-char tableauDeRoutage[100][100];
+int tableauDeRoutage[100][3];
 
 struct argsThreadsLiaison
 {
     int ecritureVersAutorisation;
     int lectureDeTerminal;
+    int ecritureDansTerminal;
     int numeroDuTerminal;
+
     //ces champs sont juste pour les test
     // int recoiDeAutorisation;
     // int ecritVersTerminal;
@@ -45,8 +47,6 @@ int main(int argc, char const *argv[])
     }
 
     int nombreTerminaux = atoi(argv[1]);
-
-    
 
     //creation des tubes de communication avec Autorisation
     int descripteurTubeEnvoiVersAutorisation[2];
@@ -82,14 +82,12 @@ int main(int argc, char const *argv[])
         pipe(tableauDeTubeLectureDuTerminal[c]);
     }
 
-    struct argsThreadsLiaison *argumentsDuThread = (struct argsThreadsLiaison *)malloc(sizeof(struct argsThreadsLiaison));
     //creation de n thread pour n terminaux
     pthread_t *threadsTerminaux = (pthread_t *)malloc(nombreTerminaux * sizeof(pthread_t));
 
     printf("FD envoi vers Autorisation %d\n", descripteurTubeEnvoiVersAutorisation[1]);
     printf("FD recoi de Autorisation %d\n", descripteurTuberecoiDeAutorisation[0]);
 
-    argumentsDuThread->ecritureVersAutorisation = descripteurTubeEnvoiVersAutorisation[1];
     //champs de test
     // argumentsDuThread->recoiDeAutorisation = descripteurTuberecoiDeAutorisation[0];
 
@@ -101,18 +99,20 @@ int main(int argc, char const *argv[])
     struct argumentsRoutage *argumentRoutageInitialisation = (struct argumentsRoutage *)malloc(sizeof(struct argumentsRoutage));
 
     pthread_t threadRoutage;
-    pthread_create(&threadRoutage, NULL, fonctionThreadRoutage, (void *)argumentRoutageInitialisation);
-
     argumentRoutageInitialisation->recoiDeAutorisation = descripteurTuberecoiDeAutorisation[0];
-
-    // argumentRoutageInitialisation->ecritDansLeTerminal = tableauDeTubeEcritureDansTerminal[1][1];
+    pthread_create(&threadRoutage, NULL, fonctionThreadRoutage, (void *)argumentRoutageInitialisation);
 
     int i = 0;
 
     while (i < nombreTerminaux)
     {
 
+        struct argsThreadsLiaison *argumentsDuThread = (struct argsThreadsLiaison *)malloc(sizeof(struct argsThreadsLiaison));
+
+        argumentsDuThread->ecritureVersAutorisation = descripteurTubeEnvoiVersAutorisation[1];
+
         argumentsDuThread->lectureDeTerminal = tableauDeTubeLectureDuTerminal[i][0];
+        argumentsDuThread->ecritureDansTerminal = tableauDeTubeEcritureDansTerminal[i][1];
         argumentsDuThread->numeroDuTerminal = i;
         //champs de test thread
         // argumentsDuThread->ecritVersTerminal = tableauDeTubeEcritureDansTerminal[i][1];
@@ -140,6 +140,8 @@ int main(int argc, char const *argv[])
         printf("Terminal %d crée\n", i);
         i++;
     }
+
+    printf("table de routage (acq), numCB : %d , numTerm : %d , FD : %d \n", tableauDeRoutage[0][0], tableauDeRoutage[0][1], tableauDeRoutage[0][2]);
 
     if (fork() == 0)
     {
@@ -169,6 +171,11 @@ int main(int argc, char const *argv[])
     //     a++;
     // }
 
+    for (int i = 0; i < nombreTerminaux; i++)
+    {
+        pthread_join(threadsTerminaux[i], NULL);
+    }
+
     wait(NULL);
 
     return 0;
@@ -176,78 +183,93 @@ int main(int argc, char const *argv[])
 
 void *routineThreadTerminaux(void *args)
 {
+    while (1)
+    {
+        printf("on est dans le thread d'un terminal\n");
 
-    printf("on est dans le thread\n");
+        printf("FD ecriture autorisation: %d\n", ((struct argsThreadsLiaison *)args)->ecritureVersAutorisation);
+        printf("FD lecture de Terminal: %d\n", ((struct argsThreadsLiaison *)args)->lectureDeTerminal);
+        printf("numero de Terminal : %d\n", ((struct argsThreadsLiaison *)args)->numeroDuTerminal);
 
-    printf("FD ecriture autorisation: %d\n", ((struct argsThreadsLiaison *)args)->ecritureVersAutorisation);
-    printf("FD lecture de Terminal: %d\n", ((struct argsThreadsLiaison *)args)->lectureDeTerminal);
-    printf("numero de Terminal : %d\n", ((struct argsThreadsLiaison *)args)->numeroDuTerminal);
+        char *demandeDuTerminal = litLigne(((struct argsThreadsLiaison *)args)->lectureDeTerminal);
 
-    char *demandeDuTerminal = litLigne(((struct argsThreadsLiaison *)args)->lectureDeTerminal);
+        printf("DEMANDE DU TERMINAL ASSOCIE AU THREAD %s \n", demandeDuTerminal);
 
-    char numeroCarte[17];
-    char type[20];
-    char valeurTransaction[100];
+        char numeroCarte[17];
+        char type[20];
+        char valeurTransaction[100];
 
-    decoupe(demandeDuTerminal,numeroCarte,type,valeurTransaction);
-    int numTerm = ((struct argsThreadsLiaison *)args)->numeroDuTerminal;
-    char numeroTerminal[100];
-    sprintf(numeroTerminal,"%d",numTerm);
+        decoupe(demandeDuTerminal, numeroCarte, type, valeurTransaction);
+        int numTerm = ((struct argsThreadsLiaison *)args)->numeroDuTerminal;
+        char numeroTerminal[100];
+        sprintf(numeroTerminal, "%d", numTerm);
 
+        //il faudrait trouver mieux pour initialiser les tableaux notamment avec des mallocs
+        char fileDescripteurEcritureDansTerminali[100];
+        sprintf(fileDescripteurEcritureDansTerminali, "%d", ((struct argsThreadsLiaison *)args)->ecritureDansTerminal);
 
-    //code en dur à changer -------------------
-    tableauDeRoutage[numTerm][numTerm] = numTerm;
-    tableauDeRoutage[numTerm][0] = numeroCarte;
+        //code en dur qui serai bien de changer -------------------
+        // strcpy(&tableauDeRoutage[numTerm][1],numeroTerminal);
+        // strcpy(tableauDeRoutage[numTerm][1],"b");
+        // strcpy(&tableauDeRoutage[numTerm][0],numeroCarte);
+        // tableauDeRoutage[numTerm][0] = numeroCarte;
+        // strcpy(&tableauDeRoutage[numTerm][2],fileDescripteurEcritureDansTerminali);
 
+        tableauDeRoutage[numTerm][1] = numTerm;
+        tableauDeRoutage[numTerm][0] = atoi(numeroCarte);
+        tableauDeRoutage[numTerm][2] = ((struct argsThreadsLiaison *)args)->ecritureDansTerminal;
 
+        printf("table de routage, numCB : %d , numTerm : %d , FD : %d \n", tableauDeRoutage[numTerm][0], tableauDeRoutage[numTerm][1], tableauDeRoutage[numTerm][2]);
+        // tableauDeRoutage[numTerm][2] = fileDescripteurEcritureDansTerminali;
 
+        printf("la demande envoyé PAR le terminal %d est : %s\n", ((struct argsThreadsLiaison *)args)->numeroDuTerminal, demandeDuTerminal);
+        ecritLigne(((struct argsThreadsLiaison *)args)->ecritureVersAutorisation, demandeDuTerminal);
 
+        //champs pour test
 
+        // char *reponseAutorisation = litLigne(((struct argsThreadsLiaison*)args)->recoiDeAutorisation);
 
-
-
-    printf("la demande envoyé PAR le terminal %d est : %s\n", ((struct argsThreadsLiaison *)args)->numeroDuTerminal, demandeDuTerminal);
-    ecritLigne(((struct argsThreadsLiaison *)args)->ecritureVersAutorisation, demandeDuTerminal);
-
-    //champs pour test
-
-    // char *reponseAutorisation = litLigne(((struct argsThreadsLiaison*)args)->recoiDeAutorisation);
-
-    // printf("reponse de autorisation : %s\n", reponseAutorisation);
-    // ecritLigne(((struct argsThreadsLiaison*)args)->ecritVersTerminal, reponseAutorisation);
-
+        // printf("reponse de autorisation : %s\n", reponseAutorisation);
+        // ecritLigne(((struct argsThreadsLiaison*)args)->ecritVersTerminal, reponseAutorisation);
+    }
     return NULL;
 }
 
 void *fonctionThreadRoutage(void *inputRoutage)
 {
-
-    printf("Entrer dans le thread de routage \n");
-    // printf("Ce qu'il y avait dans le tube sortant d'autorisation : %d \n", ((struct argumentsRoutage *)inputRoutage)->recoiDeAutorisation);
-
-    char *reponseDeAutorisation = litLigne(((struct argumentsRoutage *)inputRoutage)->recoiDeAutorisation);
-
-    char numeroCarte[17];
-    char type[20];
-    char valeurTransaction[100];
-
-    decoupe(reponseDeAutorisation,numeroCarte,type,valeurTransaction);
-
-    for(int i = 0; i < 100; i++)
+    while (1)
     {
-        if(strcmp(tableauDeRoutage[i][0],numeroCarte) == 0){
-            
+        int numeroDuTerminalAEnvoyer;
+        int terminalAEnvoyer;
+        printf("Entrer dans le thread de routage \n");
+
+        // printf("table de routage, numCB : %c , numTerm : %c , FD : %c \n",tableauDeRoutage[0][0],tableauDeRoutage[0][1],tableauDeRoutage[0][2]);
+        // printf("Ce qu'il y avait dans le tube sortant d'autorisation : %d \n", ((struct argumentsRoutage *)inputRoutage)->recoiDeAutorisation);
+
+        char *reponseDeAutorisation = litLigne(((struct argumentsRoutage *)inputRoutage)->recoiDeAutorisation);
+
+        printf("REPONSE DE AUTORISATION %s \n", reponseDeAutorisation);
+
+        char numeroCarte[17];
+        char type[20];
+        char valeurTransaction[100];
+
+        decoupe(reponseDeAutorisation, numeroCarte, type, valeurTransaction);
+
+        for (int i = 0; i < 100; i++)
+        {
+            if (tableauDeRoutage[i][0] == atoi(numeroCarte))
+            {
+                numeroDuTerminalAEnvoyer = tableauDeRoutage[i][1];
+                terminalAEnvoyer = tableauDeRoutage[i][2];
+            }
         }
+
+        // int descripteurTerminalAEnvoyer = atoi(&terminalAEnvoyer);
+
+        ecritLigne(terminalAEnvoyer, reponseDeAutorisation);
+        printf("cette reponse doit rejoindre le terminale avec le message : %s \n", reponseDeAutorisation);
     }
-    
-
-
-
-    
-
-    ecritLigne((((struct argumentsRoutage *)inputRoutage)->ecritDansLeTerminal), reponseDeAutorisation);
-    printf("cette reponse doit rejoindre le terminale avec le message : %s \n", reponseDeAutorisation);
-
     return NULL;
 }
 
