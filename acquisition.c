@@ -273,4 +273,3 @@ void *fonctionThreadRoutage(void *inputRoutage)
     return NULL;
 }
 
-//TODO tableau de routage à initialiser et à incrémenter dans les threads + faire la liaison entre threads de routage et tous le programme
