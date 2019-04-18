@@ -31,11 +31,11 @@ struct argsThreadsLiaison
     // int ecritVersTerminal;
 };
 
-struct argumentsRoutage
+typedef struct argumentsRoutage
 {
     int recoiDeAutorisation;
     int ecritDansLeTerminal;
-};
+} argumentsRoutage;
 
 int main(int argc, char const *argv[])
 {
@@ -119,23 +119,31 @@ int main(int argc, char const *argv[])
 
         pthread_create(&threadsTerminaux[i], NULL, routineThreadTerminaux, (void *)argumentsDuThread);
 
-        if (fork() == 0)
+        fprintf(stderr, "avant terminal %d cree par acquisition\n", i);
+        int ppp = fork();
+        fprintf(stderr, "fork = %d\n", ppp);
+        if (ppp == 0)
         {
-            printf("terminal %d cree par acquisition\n", i);
+            fprintf(stderr, "terminal %d cree par acquisition\n", i);
 
             char tubeEcritureDansTerminal[100];
             char tubeLectureDuTerminal[100];
 
             sprintf(tubeEcritureDansTerminal, "%d", tableauDeTubeEcritureDansTerminal[i][0]);
             sprintf(tubeLectureDuTerminal, "%d", tableauDeTubeLectureDuTerminal[i][1]);
-
-            printf("tubeEcritureDansTerminal %s\n", tubeEcritureDansTerminal);
-            printf("tubeLectureDuTerminal %s\n", tubeLectureDuTerminal);
-
+            fprintf(stderr, "xx\n");
+            fprintf(stderr, "tubeEcritureDansTerminal %s\n", tubeEcritureDansTerminal);
+            fprintf(stderr, "tubeLectureDuTerminal %s\n", tubeLectureDuTerminal);
+            printf( "tubeEcritureDansTerminal %s\n", tubeEcritureDansTerminal);
+            printf( "tubeLectureDuTerminal %s\n", tubeLectureDuTerminal);
+            fflush(stdout);
+           fprintf(stderr, "xxyy\n");
+ 
             execl("terminal", "terminal", tubeLectureDuTerminal, tubeEcritureDansTerminal, NULL);
+            fprintf(stderr, "pb\n");
             //execution de xterm sous linux (xterm ne fonctionne pas sous mac os)
             // execlp("xterm","xterm","-hold","-e","./terminal",tubeLectureDuTerminal, tubeEcritureDansTerminal, NULL);
-        }
+        } 
 
         printf("Terminal %d crée\n", i);
         i++;
@@ -199,7 +207,8 @@ void *routineThreadTerminaux(void *args)
         char type[20];
         char valeurTransaction[100];
 
-        decoupe(demandeDuTerminal, numeroCarte, type, valeurTransaction);
+        int r=decoupe(demandeDuTerminal, numeroCarte, type, valeurTransaction);
+        if (r==0) perror("Pb terminal");
         int numTerm = ((struct argsThreadsLiaison *)args)->numeroDuTerminal;
         char numeroTerminal[100];
         sprintf(numeroTerminal, "%d", numTerm);

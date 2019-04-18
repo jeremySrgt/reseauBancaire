@@ -16,16 +16,16 @@
 
 /**
  * Decoupe du message 
- * Retourne 1 si il n'y a pas eu de problème
- * Retourne 0 si il y a eu un problème - errno est mis à EINVAL dans ce cas.
+ * Retourne 1 si il n'y a pas eu de problï¿½me
+ * Retourne 0 si il y a eu un problï¿½me - errno est mis ï¿½ EINVAL dans ce cas.
  * ATTENTION:
  *   Les variables emeteur, destinataire, commande, identifiant
- *   et sms doivent être allouées avant l'appel à decoupe
+ *   et sms doivent ï¿½tre allouï¿½es avant l'appel ï¿½ decoupe
  */
-int decoupe(char *message,      /* Source a découper */
+int decoupe(char *message,      /* Source a dï¿½couper */
 	    char *cb,           /* no de carte concernee */
 	    char *type,         /* Type du message */
-	    char *valeur        /* Valeur associée au message */
+	    char *valeur        /* Valeur associï¿½e au message */
 	    )
 {
   int nb=sscanf(message, "|%[^|]|%[^|]|%[^|]|\n", 
@@ -42,7 +42,7 @@ int decoupe(char *message,      /* Source a découper */
  * Construction du message
  * Retourne le message construit suivant le protocole
  * a partir des arguments
- * Le message est alloué dans la fonction
+ * Le message est allouï¿½ dans la fonction
  */
 char* message(char *cb, char *type, char * valeur)
 {

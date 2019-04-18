@@ -18,7 +18,7 @@
 int main(int argc, char const *argv[])
 {
     
-
+    fprintf(stderr,"coucou\n");
     //Convertit en int les arguments passé au main
 
     int tubeEcritureDemande = atoi(argv[1]);
@@ -44,12 +44,12 @@ int main(int argc, char const *argv[])
 
 
 
-    // aleainit();
-    // int nombreAleatoire = alea(1, 20);
+    aleainit();
+    int nombreAleatoire = alea(0,19);
 
-    srand(clock());
+    // srand(clock());
 
-    int nombreAleatoire = rand() % 20;
+    // int nombreAleatoire = rand() % 20;
 
     AnnuaireClients *annuaireClient = annuaire("InfoClient.txt");
     char *codeCbAleatoire = annuaireClient->donnees[nombreAleatoire].CB;
