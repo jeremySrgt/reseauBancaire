@@ -23,6 +23,7 @@ int main(int argc, char const *argv[])
 
     int tubeEcritureDemande = atoi(argv[1]);
     int tubeLectureReponse = atoi(argv[2]);
+    int numeroTerminal = atoi(argv[3]);
 
     // Permet de rediriger dans l'entrée et la sortie des tubes
 
@@ -44,12 +45,12 @@ int main(int argc, char const *argv[])
 
 
 
-    aleainit();
-    int nombreAleatoire = alea(0,19);
+    // aleainit();
+    // int nombreAleatoire = alea(0,19);
 
-    // srand(clock());
+    srand(clock());
 
-    // int nombreAleatoire = rand() % 20;
+    int nombreAleatoire = rand() % 19;
 
     AnnuaireClients *annuaireClient = annuaire("InfoClient.txt");
     char *codeCbAleatoire = annuaireClient->donnees[nombreAleatoire].CB;
@@ -71,6 +72,8 @@ int main(int argc, char const *argv[])
     //Ecrit dans le tube la demande selon le protocole
 
     ecritLigne(tubeEcritureDemande, demandeArgent);
+
+    fprintf(stderr,"AVANT litligne de TERMINAL\n");
     char *reponse = litLigne(tubeLectureReponse);
 
     fprintf(stderr, "reponse recu de acquisition apres traitement par autorisation : %s", reponse);
@@ -84,12 +87,12 @@ int main(int argc, char const *argv[])
     if (strcmp(reponse, accepte) == 0)
     {
         //Payement accepté
-        fprintf(stderr, "---------------------payement accepte---------------------\n");
+        fprintf(stderr, "---------------------payement accepte du terminal %d ---------------------\n",numeroTerminal);
     }
     else
     {
         //Payement refusé
-        fprintf(stderr, "---------------------payement refuse---------------------\n");
+        fprintf(stderr, "---------------------payement refuse du terminal %d ---------------------\n",numeroTerminal);
     }
 
     return 0;
