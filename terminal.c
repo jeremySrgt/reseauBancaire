@@ -33,8 +33,8 @@ int main(int argc, char const *argv[])
     // Création d'un annuaire composé de n banque et n client
     // L'annuaire est ensuite sauvegarder dans un fichier texte
 
-    // AnnuaireClients *annuaireCree;
-    // annuaireCree =  annuaireAleatoire(2, 20);
+    //AnnuaireClients *annuaireCree;
+    //annuaireCree =  annuaireAleatoire(2, 40);
     // //sauvegarde annuaire crée dans le fichier InfoClient.txt pour autorisation
     // sauvegardeAnnuaire(annuaireCree, "InfoClient.txt");
 
@@ -50,7 +50,7 @@ int main(int argc, char const *argv[])
 
     srand(clock());
 
-    int nombreAleatoire = rand() % 19;
+    int nombreAleatoire = rand() % 49;
 
     AnnuaireClients *annuaireClient = annuaire("InfoClient.txt");
     char *codeCbAleatoire = annuaireClient->donnees[nombreAleatoire].CB;
@@ -63,7 +63,7 @@ int main(int argc, char const *argv[])
     // Convertit le nombre aléatoire en une chaine de caractère
 
     char argentAleatoire[70];
-    sprintf(argentAleatoire, "%d", alea(5, 100000));
+    sprintf(argentAleatoire, "%d", alea(30000, 900000));
 
     // Formatage du message pour etre selon la forme demandé |...|...|...|
 
