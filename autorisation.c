@@ -51,11 +51,11 @@ while(1){
     // On decoupe le message reçu de terminal
 
     if(decoupe(transactionDemande,numeroCarte,type,valeurTransaction) == 0){
-        printf("La decoupe du message de transaction a échoué");
+        fprintf(stderr,"La decoupe du message de transaction a échoué");
     }
 
     int montantDemande = atol(valeurTransaction);
-    fprintf(stderr,"numcb : %s type : %s valeur : %s \n",numeroCarte,type,valeurTransaction);
+    // fprintf(stderr,"numcb : %s type : %s valeur : %s \n",numeroCarte,type,valeurTransaction);
 
 
     // On recupère le solde du client associé au compte que l'on traite
@@ -90,12 +90,12 @@ while(1){
 
     if(carteOK == 1 && montantOK ==1){
         ecritLigne(TubeEcritureReponse,message(numeroCarte,"Reponse","1"));
-        fprintf(stderr,"message envoyé par autorisation a acquisition quand on accepte le payement: %s",message(numeroCarte,"Reponse","1"));
+        // fprintf(stderr,"message envoyé par autorisation a acquisition quand on accepte le payement: %s",message(numeroCarte,"Reponse","1"));
     }
     else
     {
         ecritLigne(TubeEcritureReponse,message(numeroCarte,"Reponse","0"));
-        fprintf(stderr, "Message envoyé par autorisation a acquisition quand il y a refus de payement : %s", message(numeroCarte, "Reponse", "0"));
+        // fprintf(stderr, "Message envoyé par autorisation a acquisition quand il y a refus de payement : %s", message(numeroCarte, "Reponse", "0"));
     }
     
 }
