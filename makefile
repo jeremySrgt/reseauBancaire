@@ -30,6 +30,7 @@ testAnnuaire: testAnnuaire.c annuaire.o alea.o lectureEcriture.o
 annuaire.o: annuaire.c annuaire.h alea.h lectureEcriture.h
 	gcc -c annuaire.c
 
+
 TestMessage: message.o alea.o TestMessage.c
 	gcc -Wall TestMessage.c message.o alea.o -o  TestMessage
 
