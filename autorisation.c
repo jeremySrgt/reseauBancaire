@@ -16,7 +16,7 @@ int main(int argc, char const *argv[])
 /*******************************************************************************************/
 /* Le serveur autorisation reçoit la demande de terminal après son passage par acquisition */
 /* Il reverifie si le compte voulant retirer est bien présent dans sa banque, puis vérifie */
-/* que la solde du compte est suffisante et il renvoi un message adapté.                   */
+/* que le solde du compte est suffisant et il renvoi un message adapté.                   */
 /*******************************************************************************************/
 
 
