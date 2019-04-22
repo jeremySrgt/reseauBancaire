@@ -30,20 +30,20 @@ while(1){
     // On récupère l'annuaire contenant les numéro de carte et leur solde
 
     AnnuaireClients *annuaireClient = annuaire("InfoClient.txt");
-   
+
     int carteOK = 0;
     int montantOK = 0;
 
     // Permet de rediriger dans l'entrée et la sortie des tubes
 
     dup2(TubeEcritureReponse,1); //ecrit dans argv1
-    dup2(TubeLectureDemande,0);//lit dans argv2 
+    dup2(TubeLectureDemande,0);//lit dans argv2
 
     char *transactionDemande = litLigne(TubeLectureDemande);
 
     fprintf(stderr,"transaction emise par le terminal %s\n",transactionDemande);
 
-    //TODO mieux initialiser les char 
+    //TODO mieux initialiser les char
     char numeroCarte[17];
     char type[20];
     char valeurTransaction[100];
@@ -51,11 +51,11 @@ while(1){
     // On decoupe le message reçu de terminal
 
     if(decoupe(transactionDemande,numeroCarte,type,valeurTransaction) == 0){
-        printf("La decoupe du message de transaction a échoué");
+        fprintf(stderr,"La decoupe du message de transaction a échoué");
     }
 
     int montantDemande = atol(valeurTransaction);
-    fprintf(stderr,"numcb : %s type : %s valeur : %s \n",numeroCarte,type,valeurTransaction);
+    // fprintf(stderr,"numcb : %s type : %s valeur : %s \n",numeroCarte,type,valeurTransaction);
 
 
     // On recupère le solde du client associé au compte que l'on traite
@@ -83,21 +83,21 @@ while(1){
     {
         fprintf(stderr,"Solde du compte insuffisant \n");
     }
-    
+
 
     // Si la carte appartient bien à cette banque et qu'il y a assez d'argent sur le code pour la transaction on autorise le retrait
     // sinon on refuse et on envoi le message correspondant selon le protocole
 
     if(carteOK == 1 && montantOK ==1){
         ecritLigne(TubeEcritureReponse,message(numeroCarte,"Reponse","1"));
-        fprintf(stderr,"message envoyé par autorisation a acquisition quand on accepte le payement: %s",message(numeroCarte,"Reponse","1"));
+        // fprintf(stderr,"message envoyé par autorisation a acquisition quand on accepte le payement: %s",message(numeroCarte,"Reponse","1"));
     }
     else
     {
         ecritLigne(TubeEcritureReponse,message(numeroCarte,"Reponse","0"));
-        fprintf(stderr, "Message envoyé par autorisation a acquisition quand il y a refus de payement : %s", message(numeroCarte, "Reponse", "0"));
+        // fprintf(stderr, "Message envoyé par autorisation a acquisition quand il y a refus de payement : %s", message(numeroCarte, "Reponse", "0"));
     }
-    
+
 }
     return 0;
 

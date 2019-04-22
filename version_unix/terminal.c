@@ -18,7 +18,6 @@
 int main(int argc, char const *argv[])
 {
 
-    fprintf(stderr,"coucou\n");
     //Convertit en int les arguments passé au main
 
     int tubeEcritureDemande = atoi(argv[1]);
@@ -73,7 +72,6 @@ int main(int argc, char const *argv[])
 
     ecritLigne(tubeEcritureDemande, demandeArgent);
 
-    fprintf(stderr,"AVANT litligne de TERMINAL\n");
     char *reponse = litLigne(tubeLectureReponse);
 
     fprintf(stderr, "reponse recu de acquisition apres traitement par autorisation : %s", reponse);
