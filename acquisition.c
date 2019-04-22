@@ -31,8 +31,8 @@ struct argsThreadsLiaison
 struct argumentsRoutage{
         int recoiDeAutorisation;
         int ecritDansLeTerminal;
-        
-        
+
+          
 };
 
 
