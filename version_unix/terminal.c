@@ -85,12 +85,12 @@ int main(int argc, char const *argv[])
     if (strcmp(reponse, accepte) == 0)
     {
         //Payement accepté
-        fprintf(stderr, "---------------------payement accepte du terminal %d ---------------------\n",numeroTerminal);
+        fprintf(stderr, "---------------------paiement accepte du terminal %d ---------------------\n",numeroTerminal);
     }
     else
     {
         //Payement refusé
-        fprintf(stderr, "---------------------payement refuse du terminal %d ---------------------\n",numeroTerminal);
+        fprintf(stderr, "---------------------paiement refuse du terminal %d ---------------------\n",numeroTerminal);
     }
 
     return 0;
