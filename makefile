@@ -22,7 +22,7 @@ acquisition.o : acquisition.c
 	gcc -Wall -g -c acquisition.c
 
 acquisition: acquisition.o lectureEcriture.o message.o
-	gcc -Wall -lpthread acquisition.o lectureEcriture.o message.o -o acquisition
+	gcc -Wall acquisition.o lectureEcriture.o message.o -o acquisition -lpthread
 
 testAnnuaire: testAnnuaire.c annuaire.o alea.o lectureEcriture.o
 	gcc testAnnuaire.c annuaire.o alea.o lectureEcriture.o -o testAnnuaire

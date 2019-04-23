@@ -19,6 +19,7 @@ void *routineThreadTerminaux(void *args);
 void *fonctionThreadRoutage(void *inputRoutage);
 
 int tableauDeRoutage[100][3];
+int incrementPositionTableRoutage = 0;
 
 //allocation d'un semaphore
 sem_t semaphore;
@@ -222,18 +223,28 @@ void *routineThreadTerminaux(void *args)
         // strcpy(&tableauDeRoutage[numTerm][2],fileDescripteurEcritureDansTerminali);
 
 
+        //section critique    
         sem_wait(&semaphore);
-        tableauDeRoutage[numTerm][1] = numTerm;
-        tableauDeRoutage[numTerm][0] = atoi(numeroCarte);
-        tableauDeRoutage[numTerm][2] = ((struct argsThreadsLiaison *)args)->ecritureDansTerminal;
 
-        sem_post(&semaphore);
+        tableauDeRoutage[incrementPositionTableRoutage][1] = numTerm;
+        tableauDeRoutage[incrementPositionTableRoutage][0] = atoi(numeroCarte);
+        tableauDeRoutage[incrementPositionTableRoutage][2] = ((struct argsThreadsLiaison *)args)->ecritureDansTerminal;
+
+        incrementPositionTableRoutage++;
+
+        
 
         // printf("table de routage, numCB : %d , numTerm : %d , FD : %d \n", tableauDeRoutage[numTerm][0], tableauDeRoutage[numTerm][1], tableauDeRoutage[numTerm][2]);
         // tableauDeRoutage[numTerm][2] = fileDescripteurEcritureDansTerminali;
 
         printf("la demande envoyé PAR le terminal %d est : %s\n", ((struct argsThreadsLiaison *)args)->numeroDuTerminal, demandeDuTerminal);
         ecritLigne(((struct argsThreadsLiaison *)args)->ecritureVersAutorisation, demandeDuTerminal);
+
+
+        //mettre le sem_post apres le ecritligne permet de s'asssurer que les demandes sont ecrites dans l'ordre dans le tube de autorisations
+        //et que du coup elle seront renvoyés au bon terminal
+        sem_post(&semaphore);
+        //fin section critique
 
         //champs pour test
 
